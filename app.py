@@ -5,14 +5,19 @@ from datetime import datetime
 import MySQLdb
 import urllib
 import requests
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Create instance of flask app
 app = Flask(__name__)
 
 # MySQL Configuration
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_HOST'] = os.getenv("DB_HOST")
+app.config['MYSQL_USER'] = os.getenv("DB_USERNAME")
+app.config['MYSQL_PASSWORD'] = os.getenv("DB_PASSWORD")
 app.config['MYSQL_PORT'] = 3306
 app.config['MYSQL_DB'] = 'librarydb'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
@@ -351,6 +356,9 @@ def import_books():
                 break
 
             for book in res['message']:
+                # Parse and format the publication date
+                publication_date = datetime.strptime(book['publication_date'], '%m/%d/%Y').strftime('%Y-%m-%d')
+
                 # Check if book with same ID already exists
                 result = cur.execute(
                     "SELECT id FROM books WHERE id=%s", [book['bookID']])
@@ -368,7 +376,7 @@ def import_books():
                         book['  num_pages'],
                         book['ratings_count'],
                         book['text_reviews_count'],
-                        book['publication_date'],
+                        publication_date,  # Use the formatted date here
                         book['publisher'],
                         form.quantity_per_book.data,
                         # When a book is first added, available_quantity = total_quantity

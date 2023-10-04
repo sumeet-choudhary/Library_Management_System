@@ -1,11 +1,21 @@
-{% extends 'layout.html' %}
+{% extends 'base.html' %}
 {% block body %}
 <br>
-<h1>Books</h1>
-<a class="btn btn-success" href="/add_book">Add New Book</a>
-<a class="btn btn-secondary" href="/import_books">Import From API</a>
-<hr>
+<h1>Search for a Book</h1>
+{% from "includes/_formhelpers.html" import render_field %}
+<form method="POST" action="">
+    <div class="form-group">
+        {{render_field(form.title, class_="form-control")}}
+    </div><br>
+    <div class="form-group">
+        {{render_field(form.author, class_="form-control")}}
+    </div><br>
+    <p><button type="submit" class="btn btn-primary" value="Submit">Submit</button></p>
+</form>
 {% if books %}
+<br>
+<h1>Search Results: </h1>
+<hr>
 <table class="table table-hover table-striped">
     <thead>
         <tr>
